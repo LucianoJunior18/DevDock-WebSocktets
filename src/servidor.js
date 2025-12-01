@@ -1,6 +1,8 @@
 import express from 'express';
 import url from 'url';
 import path from 'path';
+import http from 'http';
+import { Server } from 'socket.io';
 
 const app = express();
 const PORTA = process.env.PORT || 3000;
@@ -10,6 +12,14 @@ const diretorioPublico = path.join(caminhoAtual, "../..","public");
 app.use(express.static(diretorioPublico));
 
 
-app.listen(PORTA, () => {
+const servidorHttp = http.createServer(app);
+
+servidorHttp.listen(PORTA, () => {
   console.log(`Servidor rodando na porta ${PORTA}`);
 });
+
+const io = new Server (servidorHttp);
+
+io.on('connection', () => {
+  console.log(`Um cliente se conectou`);
+}); 
